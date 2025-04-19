@@ -1,7 +1,7 @@
 name: CI Order Service
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/order-service ]
     paths:
       - 'order-service/**'
   pull_request:
