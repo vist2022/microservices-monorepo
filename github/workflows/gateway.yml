@@ -1,13 +1,13 @@
 name: CI Order Service
 on:
   push:
-    branches: [ master, feature/order-service ]
+    branches: [ master, feature/gateway ]
     paths:
-      - 'order-service/**'
+      - 'gateway/**'
   pull_request:
     branches: [ master ]
     paths:
-      - 'order-service/**'
+      - 'gateway/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
       - name: Build Order Service
-        working-directory: order-service
-        run: mvn clean install -DskipTests
+        working-directory: gateway
+        run: mvn clean install
