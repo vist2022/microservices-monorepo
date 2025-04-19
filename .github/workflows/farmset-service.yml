@@ -1,13 +1,13 @@
-name: CI Farmer Service
+name: CI Farmset Service
 on:
   push:
-    branches: [ master, feature/farmer-service ]
+    branches: [ master, feature/farmset-service ]
     paths:
-      - 'farmer-service/**'
+      - 'farmset-service/**'
   pull_request:
     branches: [ master ]
     paths:
-      - 'farmer-service/**'
+      - 'farmset-service/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,6 +18,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build Farmer Service
-        working-directory: farmer-service
+      - name: Build Farmset Service
+        working-directory: farmset-service
         run: mvn clean install -DskipTests
