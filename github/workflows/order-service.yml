@@ -1,11 +1,11 @@
 name: CI Order Service
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'order-service/**'
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'order-service/**'
 jobs:
