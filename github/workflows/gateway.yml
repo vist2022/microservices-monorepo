@@ -1,4 +1,4 @@
-name: CI Order Service
+name: CI Gateway
 on:
   push:
     branches: [ master, feature/gateway ]
