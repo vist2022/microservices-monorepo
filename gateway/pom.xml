@@ -10,6 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
+
 	<groupId>daily-farm.gateway</groupId>
 	<artifactId>gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
