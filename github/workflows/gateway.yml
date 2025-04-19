@@ -1,13 +1,13 @@
 name: CI Order Service
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/gateway ]
     paths:
-      - 'order-service/**'
+      - 'gateway/**'
   pull_request:
     branches: [ master ]
     paths:
-      - 'order-service/**'
+      - 'gateway/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,5 +18,5 @@ jobs:
         with:
           java-version: '17'
       - name: Build Order Service
-        working-directory: order-service
+        working-directory: gateway
         run: mvn clean install
