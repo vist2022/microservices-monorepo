@@ -1,0 +1,22 @@
+name: CI Order Service
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'order-service/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'order-service/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+      - name: Build Order Service
+        working-directory: order-service
+        run: mvn clean install
