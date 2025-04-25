@@ -33,12 +33,19 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 		}
 
 		String token = exchange.getRequest().getHeaders().getFirst("Authorization");
-		log.info("GatewayFilter. Token received from header " + token);
+		log.info("GatewayFilter. Token received from header");
 		if (token != null && token.startsWith("Bearer ")) {
 			token = token.substring(7);
 			log.info("GatewayFilter. Token is not null and starts with Bearer. ");
 
 			try {
+				
+				if (jwtService.isValidTokenSigned(token)) {
+					log.error("GatewayFilter. Token is not valid");
+					exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+					return exchange.getResponse().setComplete();
+				}
+				
 				if (blackListService.isBlacklisted(token)) {
 					log.error("GatewayFilter. Token is blacklisted ");
 					exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
