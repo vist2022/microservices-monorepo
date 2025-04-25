@@ -1,0 +1,23 @@
+name: CI Farmset Service
+on:
+  push:
+    branches: [ master, feature/farmset-service ]
+    paths:
+      - 'farmset-service/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'farmset-service/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build Farmset Service
+        working-directory: farmset-service
+        run: mvn clean install -DskipTests

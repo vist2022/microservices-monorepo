@@ -1,4 +1,4 @@
-package daily_farm.gateway;
+package daily_farm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
