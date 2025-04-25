@@ -1,13 +1,13 @@
-name: CI Farmset Service
+name: CI Auth Service
 on:
   push:
-    branches: [ master, feature/farmset-service ]
+    branches: [ master, feature/auth-service ]
     paths:
-      - 'farmset-service/**'
+      - 'auth-service/**'
   pull_request:
     branches: [ master ]
     paths:
-      - 'farmset-service/**'
+      - 'auth-service/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,6 +18,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build Farmset Service
-        working-directory: farmset-service
+      - name: Build Auth Service
+        working-directory: auth-service
         run: mvn clean install -DskipTests
