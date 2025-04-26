@@ -1,30 +1,33 @@
 package daily_farm.security.token;
 
 import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
 import daily_farm.security.api.PulicEndpoints;
 
 
-
-@RequiredArgsConstructor
 @Slf4j
 @Component
-public class JwtAuthenticationFilter implements GatewayFilter {
-	private final JwtService jwtService;
-	private final TokenBlacklistService blackListService;
+public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
+	
+	@Autowired
+	private  JwtService jwtService;
+	@Autowired
+	private  TokenBlacklistService blackListService;
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
+		log.debug("JwtAuthenticationFilter invoked for path: {}", exchange.getRequest().getPath());
 		String requestURI = exchange.getRequest().getURI().getPath();
 		log.info("GatewayFilter. requestURI" + requestURI);
 		if (PulicEndpoints.isPublicEndpoint(requestURI)) {
@@ -40,7 +43,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
 			try {
 				
-				if (jwtService.isValidTokenSigned(token)) {
+				if (!jwtService.isValidTokenSigned(token)) {
 					log.error("GatewayFilter. Token is not valid");
 					exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 					return exchange.getResponse().setComplete();
@@ -58,8 +61,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 					return exchange.getResponse().setComplete();
 				}
 
-				String username = jwtService.extractUserEmail(token);
-				log.info("GatewayFilter. User name recived from token - {}", username);
+				String email = jwtService.extractUserEmail(token);
+				log.info("GatewayFilter. email recived from token - {}", email);
 
 				String role = jwtService.extractUserRole(token);
 				log.info("GatewayFilter. Role recived from token - {}", role);
@@ -67,14 +70,18 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 				String userId = jwtService.extractUserId(token);
 				log.info("GatewayFilter. userId recived from token - {}", userId);
 
-				if (username == null || role == null || userId == null) {
+				if (email == null || role == null || userId == null) {
 					exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 					return exchange.getResponse().setComplete();
 				}
-
-				exchange.getRequest().mutate().header("X-User-Id", userId).header("X-User-Role", role)
-						.header("X-User-Email", username).build();
-
+				log.info("Adding headers: X-User-Id={}, X-User-Role={}, X-User-Email={}", userId, role, email);
+				ServerHttpRequest mutatedRequest = exchange.getRequest().mutate().header("X-User-Id", userId).header("X-User-Role", role)
+						.header("X-User-Email", email).header("Authorization", "Bearer " + token).build();
+				log.debug("After adding headers: {}", mutatedRequest.getHeaders());
+				
+				ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+				return chain.filter(mutatedExchange);
+				
 				
 			} catch (ExpiredJwtException | SecurityException | MalformedJwtException e) {
 				  exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -82,6 +89,11 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 			}
 		}
 		return chain.filter(exchange);
+	}
+
+	@Override
+	public int getOrder() {
+		return -1;
 	}
 
 }
