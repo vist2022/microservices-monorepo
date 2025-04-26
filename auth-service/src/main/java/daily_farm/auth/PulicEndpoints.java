@@ -1,10 +1,11 @@
-package daily_farm.security.api;
+package daily_farm.auth;
 
-import static daily_farm.security.api.AuthApiConstants.*;
+import static daily_farm.auth.api.AuthApiConstants.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 public class PulicEndpoints {
 	
@@ -39,9 +40,18 @@ public class PulicEndpoints {
 	    }
 	    
 	    public static boolean isPublicEndpoint(String requestURI) {
-	        return PUBLIC_ENDPOINTS.stream().anyMatch(uri -> uri.equals(requestURI)) || 
+	        return PUBLIC_ENDPOINTS.contains(requestURI) || 
 	               requestURI.startsWith(PAYPAL_PREFIX);
 	    }
-
+	    
+	    public static RequestMatcher[] getPublicEndpoinstWithPrefix(){
+	    	List<String> endpointsWithPrefix =new ArrayList<>(PUBLIC_ENDPOINTS);
+	    	endpointsWithPrefix.add(PAYPAL_PREFIX + "/**");
+	    	RequestMatcher[] matchers = endpointsWithPrefix.stream()
+	    		    .map(AntPathRequestMatcher::new)
+	    		    .toArray(RequestMatcher[]::new);
+	    	
+	    	return matchers;
+	    }
 
 }
