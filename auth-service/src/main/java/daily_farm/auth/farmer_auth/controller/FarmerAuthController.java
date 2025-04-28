@@ -37,6 +37,8 @@ public class FarmerAuthController {
 
 	private final FarmerAuthService farmerAuth;
 	
+	  //Registration and verification
+	
 	@PostMapping(FARMER_REGISTER)
 	public ResponseEntity<String> registerFarmer(@Valid @RequestBody FarmerRegistrationDto farmerDto,
 			@RequestHeader(value = "X-Latitude", required = false) Double latitude,
@@ -66,8 +68,8 @@ public class FarmerAuthController {
 	@GetMapping(FARMER_EMAIL_VERIFICATION)
 	public ResponseEntity<String> emailVerification(@RequestParam String token){
 		log.info("Controller. Email verification starts - {} ", token);
-		return farmerAuth.emailVerification(token);
 		
+		return farmerAuth.emailVerification(token);
 	}
 	
 	@GetMapping(FARMER_EMAIL_VERIFICATION_RESEND)
@@ -79,7 +81,7 @@ public class FarmerAuthController {
 	
 	@GetMapping(RESET_PASSWORD)
 	public ResponseEntity<String> generateAndSendNewPassword(@Valid @RequestBody SendToRequestDto sendToRequestDto){
-		log.info("Controller. generateAndSendNewPassword starts - " + sendToRequestDto.getEmail());
+	
 		return farmerAuth.generateAndSendNewPassword(sendToRequestDto.getEmail());
 		
 	}
@@ -143,7 +145,7 @@ public class FarmerAuthController {
 	}
 	
 	@GetMapping(FARMER_NEW_EMAIL_VERIFICATION)
-	public ResponseEntity<String> getVerificationTokenToNewEmail(@RequestParam  String token){
+	public ResponseEntity<String> sendVerificationTokenToNewEmail(@RequestParam  String token){
 		log.info("Controller. getVerificationTokenToNewEmail starts - " + token);
 		return farmerAuth.sendVerificationTokenToNewEmail(token);
 		
