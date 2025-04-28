@@ -9,11 +9,17 @@
 		<version>3.4.2</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>df-customer-service</groupId>
-	<artifactId>df-customer-service</artifactId>
+	<groupId>df-farmer-service</groupId>
+	<artifactId>df-farmer-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>df-customer-service</name>
+	<name>df-farmer-service</name>
 
+	<repositories>
+		<repository>
+			<id>dynomakeRepository</id>
+			<url>https://maven.dynomake.space/releases</url>
+		</repository>
+	</repositories>
 
 	<description>Demo project for Spring Boot</description>
 	<url />
@@ -45,11 +51,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
+		
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
+			 <version>3.2.2</version>
 		</dependency>
-
 		<!--
 		https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
 		<dependency>
@@ -63,7 +71,10 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.12.6</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 		<!--
 		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
 		<dependency>
@@ -75,17 +86,32 @@
 		<dependency>
 			<groupId>com.sendgrid</groupId>
 			<artifactId>sendgrid-java</artifactId>
+			<version>4.10.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+
+		<!-- LibreTranslate -->
+		<dependency>
+			<groupId>space.dynomake</groupId>
+			<artifactId>libretranslate-java</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			<version>42.7.2</version>
 		</dependency>
 
 		<!--
@@ -93,12 +119,14 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
+			<version>5.4.2</version>
 		</dependency>
 		<!--
 		https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5-h2 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents.core5</groupId>
 			<artifactId>httpcore5-h2</artifactId>
+			<version>5.3.3</version>
 		</dependency>
 
 
