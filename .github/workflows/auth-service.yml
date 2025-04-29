@@ -1,0 +1,23 @@
+name: CI Auth Service
+on:
+  push:
+    branches: [ master, feature/auth-service ]
+    paths:
+      - 'auth-service/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'auth-service/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build Auth Service
+        working-directory: auth-service
+        run: mvn clean install -DskipTests
