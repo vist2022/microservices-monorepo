@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import daily_farm.email_sender.service.MailSenderService;
 import daily_farm.email_sender.service.SendGridEmailSender;
 import daily_farm.auth.farmer_auth.repo.FarmerCredentialRepository;
+import daily_farm.auth.farmer_auth.service.feign_client.FarmerServiceClient;
 import daily_farm.auth.api.dto.*;
+import daily_farm.auth.api.dto.farmer_service.FarmerRegistrationRequestDto;
 import daily_farm.auth.api.dto.tokens.RefreshTokenResponseDto;
 import daily_farm.auth.api.dto.tokens.TokensResponseDto;
 import daily_farm.auth.farmer_auth.entity.FarmerCredential;
@@ -42,12 +44,13 @@ public class FarmerAuthService implements IFarmerAuth{
 	private final StringRedisTemplate redisTemplate;
 	private final TokenBlacklistService blackListService;
 	
-	//private final WebClient webClient;
 	
 	
 //	????
 	private final SendGridEmailSender gridSender;
 	private final MailSenderService emailService;
+	
+	private final FarmerServiceClient farmerServiceClient;
 	
 	 @Value("${jwt.refresh.token.validity}")
 	 private long languageCacheValidity ;
@@ -100,12 +103,17 @@ public class FarmerAuthService implements IFarmerAuth{
 		
 		/// Rest?? Kafka??
 		//farmerService.createFarmer(farmer, farmerDto.getCoordinates(), lang);
-//		webClient.post()
-//			.uri(farmerServiceUrl + "/farmer")
-//			.contentType(MediaType.APPLICATION_JSON)
-//			.bodyValue(FarmerServiceRegistrationRequestDto.of(farmerDto, credential.getFarmerId()))
-//			.retrieve()
-//			.bodyToMono(String.class);
+		FarmerRegistrationRequestDto dto = FarmerRegistrationRequestDto.of(farmerDto, credential.getFarmerId());
+		dto.setLanguage(lang);
+		
+		try {
+            ResponseEntity<String> response = farmerServiceClient.createFamrerData(dto);
+            log.info("Farmer data created ");
+           
+        } catch (Exception e) {
+            log.error("Error creating farmer data : {}", e.getMessage());
+            throw new RuntimeException("Failed to create farmer data", e);
+        }
 		//TODO////////////////////////////////////////////////////////////////	
 		
 		redisTemplate.opsForValue().set("userID-" + credential.getFarmerId(), lang , languageCacheValidity, TimeUnit.MILLISECONDS);
