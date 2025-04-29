@@ -14,12 +14,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>df-farmer-service</name>
 
-	<repositories>
-		<repository>
-			<id>dynomakeRepository</id>
-			<url>https://maven.dynomake.space/releases</url>
-		</repository>
-	</repositories>
+	
 
 	<description>Demo project for Spring Boot</description>
 	<url />
@@ -66,15 +61,8 @@
 			<version>4.2.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.12.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+	
+	
 		<!--
 		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
 		<dependency>
@@ -82,36 +70,10 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.sendgrid/sendgrid-java -->
-		<dependency>
-			<groupId>com.sendgrid</groupId>
-			<artifactId>sendgrid-java</artifactId>
-			<version>4.10.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.8.4</version>
-		</dependency>
-
-		<!-- LibreTranslate -->
-		<dependency>
-			<groupId>space.dynomake</groupId>
-			<artifactId>libretranslate-java</artifactId>
-			<version>1.0.9</version>
-		</dependency>
-
-
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.2</version>
 		</dependency>
 
 		<!--
@@ -119,14 +81,12 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
-			<version>5.4.2</version>
 		</dependency>
 		<!--
 		https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5-h2 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents.core5</groupId>
 			<artifactId>httpcore5-h2</artifactId>
-			<version>5.3.3</version>
 		</dependency>
 
 
