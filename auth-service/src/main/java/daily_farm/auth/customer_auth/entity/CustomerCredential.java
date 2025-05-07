@@ -31,7 +31,6 @@ public class CustomerCredential {
 	@Id
 	@GeneratedValue
     private UUID customerId;
-
    
 	@Column(unique = true, nullable = false)
 	private String email;

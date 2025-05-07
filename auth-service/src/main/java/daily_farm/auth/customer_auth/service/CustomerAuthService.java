@@ -85,14 +85,14 @@ public class CustomerAuthService implements ICustomerAuth {
 		checkEmailIsUnique(email);
 		log.info("CustomerAuthServise.Email is unique");
 		
-		//Farmer farmer = Farmer.of(farmerDto);
-//		log.debug("FarmerAuthServise. Created Entity farmer from dto");
+
 
 		CustomerCredential credential = CustomerCredential.builder()
 				.createdAt(LocalDateTime.now())
 				.password_last_updated(LocalDateTime.now())
 				.hashedPassword(passwordEncoder.encode(customerDto.getPassword()))
 				.email(email)
+				.isVerificated(false)
 				.build();
 		
 		log.debug("CustomerAuthServise. Created Entity customer from dto");
@@ -113,7 +113,7 @@ public class CustomerAuthService implements ICustomerAuth {
 		redisTemplate.opsForValue().set("userID-" + credential.getCustomerId(), lang , languageCacheValidity, TimeUnit.MILLISECONDS);
 	
 		gridSender.sendEmailVerification(email,
-				jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_CHANGE_VERIFICATION);
+				jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION);
 
 		return ResponseEntity.ok("Customer added successfully. You need to verify your email");
 	}
