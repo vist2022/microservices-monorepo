@@ -4,9 +4,8 @@ import static daily_farm.auth.api.messages.ErrorMessages.*;
 import static daily_farm.auth.api.AuthApiConstants.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import daily_farm.email_sender.service.MailSenderService;
-import daily_farm.email_sender.service.SendGridEmailSender;
 import daily_farm.auth.farmer_auth.repo.FarmerCredentialRepository;
+import daily_farm.auth.farmer_auth.service.feign_client.EmailServiceClient;
 import daily_farm.auth.farmer_auth.service.feign_client.FarmerServiceClient;
 import daily_farm.auth.api.dto.*;
 import daily_farm.auth.api.dto.farmer_service.FarmerRegistrationRequestDto;
@@ -45,12 +44,8 @@ public class FarmerAuthService implements IFarmerAuth{
 	private final TokenBlacklistService blackListService;
 	
 	
-	
-//	????
-	private final SendGridEmailSender gridSender;
-	private final MailSenderService emailService;
-	
 	private final FarmerServiceClient farmerServiceClient;
+	private final EmailServiceClient emailFeignService;
 	
 	 @Value("${jwt.refresh.token.validity}")
 	 private long languageCacheValidity ;
@@ -86,9 +81,6 @@ public class FarmerAuthService implements IFarmerAuth{
 		checkEmailIsUnique(email);
 		log.info("FarmerAuthServise.Email is unique");
 		
-		//Farmer farmer = Farmer.of(farmerDto);
-//		log.debug("FarmerAuthServise. Created Entity farmer from dto");
-
 		FarmerCredential credential = FarmerCredential.builder()
 				.createdAt(LocalDateTime.now())
 				.password_last_updated(LocalDateTime.now())
@@ -118,8 +110,10 @@ public class FarmerAuthService implements IFarmerAuth{
 		
 		redisTemplate.opsForValue().set("userID-" + credential.getFarmerId(), lang , languageCacheValidity, TimeUnit.MILLISECONDS);
 	
-		gridSender.sendEmailVerification(email,
-				jwtService.generateVerificationToken(credential.getFarmerId().toString(), email), FARMER_EMAIL_VERIFICATION);
+		
+		emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+				jwtService.generateVerificationToken(credential.getFarmerId().toString(), email), FARMER_EMAIL_VERIFICATION));
+		
 
 		return ResponseEntity.ok("Farmer added successfully. You need to verify your email");
 	}
@@ -134,8 +128,11 @@ public class FarmerAuthService implements IFarmerAuth{
 		
 		if(!credential.isVerificated()) {
 			log.debug("Service. Login. Email is not verificated. Send link to email -" + email);
-			gridSender.sendEmailVerification(email,
-					jwtService.generateVerificationToken(credential.getFarmerId().toString(), email), FARMER_EMAIL_VERIFICATION);
+			
+			emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+					jwtService.generateVerificationToken(credential.getFarmerId().toString(), email), FARMER_EMAIL_VERIFICATION));
+
+			
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, EMAIL_IS_NOT_VERIFICATED);
 		}
 		
@@ -179,7 +176,9 @@ public class FarmerAuthService implements IFarmerAuth{
 		FarmerCredential credential = credentialRepo.findByEmail(email).orElseThrow(()->
 			new ResponseStatusException(HttpStatus.CONFLICT, FARMER_WITH_THIS_EMAIL_IS_NOT_EXISTS));
 
-		emailService.sendEmailVerification(email, jwtService.generateVerificationToken(credential.getFarmerId().toString(),email), FARMER_EMAIL_VERIFICATION );
+		emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+				jwtService.generateVerificationToken(credential.getFarmerId().toString(),email), FARMER_EMAIL_VERIFICATION ));
+		
 		return ResponseEntity.ok(CHECK_EMAIL_FOR_VERIFICATION_LINK);
 	}
 
@@ -244,8 +243,10 @@ public class FarmerAuthService implements IFarmerAuth{
 		
 		log.info("Service. Password hashed and saved to credential");
 		credential.setPassword_last_updated(LocalDateTime.now());
+
 		
-		gridSender.sendResetPassword(email, genPassword);
+		emailFeignService.sendResetPassword(new SendResetPasswordRequestDto(email, genPassword));
+
 		log.info("Service. Password was send to email ");
 		
 	return ResponseEntity.ok(CHECK_EMAIL_FOR_VERIFICATION_LINK);
@@ -268,7 +269,10 @@ public class FarmerAuthService implements IFarmerAuth{
 		
 		FarmerCredential credential = credentialRepo.findById(id).get();
 		String email = credential.getEmail();
-		gridSender.sendChangeEmailVerification(email, jwtService.generateVerificationTokenForUpdateEmail(credential.getFarmerId().toString(),email, newEmail));
+		
+		emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+				jwtService.generateVerificationTokenForUpdateEmail(credential.getFarmerId().toString(),email, newEmail), FARMER_NEW_EMAIL_VERIFICATION));
+		
 		return ResponseEntity.ok(CHECK_EMAIL_FOR_VERIFICATION_LINK + " - " + email);
 	}
 
@@ -283,7 +287,10 @@ public class FarmerAuthService implements IFarmerAuth{
 				 && !blackListService.isBlacklisted(verificationToken)) {
 			String id = jwtService.extractUserId(verificationToken);
 			String newToken = jwtService.generateVerificationTokenForUpdateEmail(id, oldEmailFromToken, newEmailFromToken);
-			gridSender.sendVerificationTokenToNewEmail(newEmailFromToken, newToken);
+			
+			emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(newEmailFromToken, newToken, FARMER_CHANGE_EMAIL));
+			//gridSender.sendVerificationTokenToNewEmail(newEmailFromToken, newToken);
+			
 			blackListService.addToBlacklist(verificationToken);
 		}else
 			throw new JwtException(INVALID_TOKEN);

@@ -19,15 +19,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import daily_farm.auth.api.dto.ChangePasswordRequest;
 import daily_farm.auth.api.dto.LoginRequestDto;
+import daily_farm.auth.api.dto.SendResetPasswordRequestDto;
+import daily_farm.auth.api.dto.SendVerificationLinkRequestDto;
 import daily_farm.auth.api.dto.customer.CustomerRegistrationDto;
 import daily_farm.auth.api.dto.tokens.RefreshTokenResponseDto;
 import daily_farm.auth.api.dto.tokens.TokensResponseDto;
 import daily_farm.auth.customer_auth.entity.CustomerCredential;
 import daily_farm.auth.customer_auth.repo.CustomerCredentialRepository;
+import daily_farm.auth.farmer_auth.service.feign_client.EmailServiceClient;
 import daily_farm.auth.token.JwtService;
 import daily_farm.auth.token.TokenBlacklistService;
-import daily_farm.email_sender.service.MailSenderService;
-import daily_farm.email_sender.service.SendGridEmailSender;
 import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class CustomerAuthService implements ICustomerAuth {
 	
 	
 //	????
-	private final SendGridEmailSender gridSender;
-	private final MailSenderService emailService;
+	
+	private final EmailServiceClient emailFeignService;
 	
 	 @Value("${jwt.refresh.token.validity}")
 	 private long languageCacheValidity ;
@@ -112,8 +113,11 @@ public class CustomerAuthService implements ICustomerAuth {
 		
 		redisTemplate.opsForValue().set("userID-" + credential.getCustomerId(), lang , languageCacheValidity, TimeUnit.MILLISECONDS);
 	
-		gridSender.sendEmailVerification(email,
-				jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION);
+		emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+				jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION));
+		
+//		gridSender.sendEmailVerification(email,
+//				jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION);
 
 		return ResponseEntity.ok("Customer added successfully. You need to verify your email");
 	}
@@ -128,8 +132,11 @@ public class CustomerAuthService implements ICustomerAuth {
 		
 		if(!credential.isVerificated()) {
 			log.debug("Service. Login. Email is not verificated. Send link to email -" + email);
-			gridSender.sendEmailVerification(email,
-					jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION);
+			
+			emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+					jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION));
+//			gridSender.sendEmailVerification(email,
+//					jwtService.generateVerificationToken(credential.getCustomerId().toString(), email), CUSTOMER_EMAIL_VERIFICATION);
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, EMAIL_IS_NOT_VERIFICATED);
 		}
 		
@@ -173,7 +180,9 @@ public class CustomerAuthService implements ICustomerAuth {
 		CustomerCredential credential = credentialRepo.findByEmail(email).orElseThrow(()->
 			new ResponseStatusException(HttpStatus.CONFLICT, CUSTOMER_WITH_THIS_EMAIL_IS_NOT_EXISTS));
 
-		emailService.sendEmailVerification(email, jwtService.generateVerificationToken(credential.getCustomerId().toString(),email), CUSTOMER_EMAIL_VERIFICATION );
+		emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email, 
+				jwtService.generateVerificationToken(credential.getCustomerId().toString(),email), CUSTOMER_EMAIL_VERIFICATION ));
+		
 		return ResponseEntity.ok(CHECK_EMAIL_FOR_VERIFICATION_LINK);
 	}
 
@@ -238,8 +247,9 @@ public class CustomerAuthService implements ICustomerAuth {
 		
 		log.info("Service. Password hashed and saved to credential");
 		credential.setPassword_last_updated(LocalDateTime.now());
+		emailFeignService.sendResetPassword(new SendResetPasswordRequestDto(email, genPassword));
 		
-		gridSender.sendResetPassword(email, genPassword);
+//		gridSender.sendResetPassword(email, genPassword);
 		log.info("Service. Password was send to email ");
 		
 	return ResponseEntity.ok(CHECK_EMAIL_FOR_VERIFICATION_LINK);
@@ -262,7 +272,11 @@ public class CustomerAuthService implements ICustomerAuth {
 		
 		CustomerCredential credential = credentialRepo.findById(id).get();
 		String email = credential.getEmail();
-		gridSender.sendChangeEmailVerification(email, jwtService.generateVerificationTokenForUpdateEmail(credential.getCustomerId().toString(),email, newEmail));
+		
+		emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(email,
+				jwtService.generateVerificationTokenForUpdateEmail(credential.getCustomerId().toString(),email, newEmail),CUSTOMER_NEW_EMAIL_VERIFICATION));
+		
+//		gridSender.sendChangeEmailVerification(email, jwtService.generateVerificationTokenForUpdateEmail(credential.getCustomerId().toString(),email, newEmail));
 		return ResponseEntity.ok(CHECK_EMAIL_FOR_VERIFICATION_LINK + " - " + email);
 	}
 
@@ -277,7 +291,9 @@ public class CustomerAuthService implements ICustomerAuth {
 				 && !blackListService.isBlacklisted(verificationToken)) {
 			String id = jwtService.extractUserId(verificationToken);
 			String newToken = jwtService.generateVerificationTokenForUpdateEmail(id, oldEmailFromToken, newEmailFromToken);
-			gridSender.sendVerificationTokenToNewEmail(newEmailFromToken, newToken);
+			
+			emailFeignService.sendEmailVerification(new SendVerificationLinkRequestDto(newEmailFromToken, newToken, CUSTOMER_CHANGE_EMAIL));
+//			gridSender.sendVerificationTokenToNewEmail(newEmailFromToken, newToken);
 			blackListService.addToBlacklist(verificationToken);
 		}else
 			throw new JwtException(INVALID_TOKEN);

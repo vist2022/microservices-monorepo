@@ -1,4 +1,4 @@
-package daily_farm.email_sender.service;
+package daily_farm.service;
 
 import org.springframework.http.ResponseEntity;
 

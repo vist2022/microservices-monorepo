@@ -1,7 +1,7 @@
-package daily_farm.email_sender.service;
+package daily_farm.service;
 
-import static daily_farm.email_sender.api.EmailSenderApiConstants.*;
-import static daily_farm.email_sender.api.SendEmailMessagesConstants.*;
+import static daily_farm.api.EmailSenderApiConstants.*;
+import static daily_farm.api.SendEmailMessagesConstants.*;
 
 import java.io.IOException;
 
