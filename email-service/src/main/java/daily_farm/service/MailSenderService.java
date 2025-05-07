@@ -1,4 +1,4 @@
-package daily_farm.email_sender.service;
+package daily_farm.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
-import static daily_farm.email_sender.api.EmailSenderApiConstants.*;
-import static daily_farm.email_sender.api.SendEmailMessagesConstants.*;
+import static daily_farm.api.EmailSenderApiConstants.*;
+import static daily_farm.api.SendEmailMessagesConstants.*;
 
 @Service("mailSenderService")
 @Slf4j

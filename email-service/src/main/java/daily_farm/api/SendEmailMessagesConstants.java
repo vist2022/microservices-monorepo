@@ -1,4 +1,4 @@
-package daily_farm.email_sender.api;
+package daily_farm.api;
 
 public interface SendEmailMessagesConstants {
 	
