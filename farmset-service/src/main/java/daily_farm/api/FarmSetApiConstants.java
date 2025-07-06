@@ -9,7 +9,10 @@ public interface FarmSetApiConstants {
 	String GET_ALL_SETS = "/farm-set/all";
 	
 	String FARM_SET_DECREASE_STOK_FOR_ORDER = "/farm-set/order";
+	String GET_FARM_SET_FOR_ORDER = "/farm-set/set-for-order";
 	String FARM_SET_INCREASE_STOK_FOR_ORDER = "/farm-set/cancel_order";
+	
+	String FARM_SET_ORDER = "/farm-set/order";
 
 	
 }

@@ -15,5 +15,8 @@ public class FarmSetRequestForOrderDto {
 	@NotBlank
 	private UUID farmSetId;
 	
+	@NotBlank
+	private String provider;
+	
 	
 }

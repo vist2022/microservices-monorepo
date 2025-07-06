@@ -16,4 +16,6 @@ public class FarmSetRequestForOrderDto {
 
 	private UUID farmSetId;
 	
+	private String provider;
+	
 }

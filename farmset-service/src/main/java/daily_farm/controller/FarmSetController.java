@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -51,15 +52,29 @@ public class FarmSetController {
 		return farmSetService.getAllFarmSets();
 	}
 	
-	@PutMapping(FARM_SET_DECREASE_STOK_FOR_ORDER)
-	public ResponseEntity<FarmSetResponseForOrderDto> decreaseStock(@Valid @RequestBody FarmSetRequestForOrderDto farmSetRequestDto) {
-	log.info("FarmSetController: start decreaseStock. Recieved FarmSetRequestForOrderDto - {}", farmSetRequestDto.getFarmSetId());
-		return farmSetService.decreaseStock(farmSetRequestDto);
+//	@PutMapping(FARM_SET_DECREASE_STOK_FOR_ORDER)
+//	public ResponseEntity<FarmSetResponseForOrderDto> decreaseStock(@Valid @RequestBody FarmSetRequestForOrderDto farmSetRequestDto) {
+//	log.info("FarmSetController: start decreaseStock. Recieved FarmSetRequestForOrderDto - {}", farmSetRequestDto.getFarmSetId());
+//		return farmSetService.decreaseStock(farmSetRequestDto);
+//	}
+	
+	@GetMapping(GET_FARM_SET_FOR_ORDER)
+	public ResponseEntity<FarmSetResponseForOrderDto> getFarmSet(@RequestParam  UUID farmSetId) {
+	log.info("FarmSetController: getFarmSet - {}", farmSetId);
+		return farmSetService.getFarmSet(farmSetId);
 	}
 	
 	@PutMapping(FARM_SET_INCREASE_STOK_FOR_ORDER)
 	public ResponseEntity<Void> increaseStock(@Valid @RequestBody FarmSetRequestForCancelOrderDto farmSetRequestDto) {
 		log.info("FarmSetController: start increaseStock. Recieved FarmSetRequestForCancelOrderDto - {}", farmSetRequestDto.getFarmSetId());
 		return farmSetService.increaseStock(farmSetRequestDto);
+	}
+	
+	@PatchMapping(FARM_SET_ORDER)
+	public ResponseEntity<String> orderCreate(@RequestBody FarmSetRequestForOrderDto dto,
+				@RequestHeader("X-User-Id") String id, @RequestHeader("Authorization") String token){
+		log.info("FarmsetController. New order request");
+		return farmSetService.reserveFarmSet(dto, id);
+		
 	}
 }

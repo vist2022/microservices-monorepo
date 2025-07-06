@@ -1,4 +1,4 @@
-package daily_farm.order.api.dto;
+package daily_farm.api.dto;
 
 public enum OrderStatus {
 	

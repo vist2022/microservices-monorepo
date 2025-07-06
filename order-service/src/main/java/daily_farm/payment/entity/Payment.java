@@ -5,9 +5,12 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import daily_farm.order.api.dto.OrderStatus;
 import daily_farm.order.entity.OrderFarmSet;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -53,7 +56,13 @@ public class Payment {
     
     private LocalDateTime updatedAt ;
 	
-    @OneToOne
-    @JoinColumn(name = "order_farm_set_id", referencedColumnName = "id")
-    private OrderFarmSet orderFarmSet;
+    @Column(nullable = false)
+    private UUID orderId;
+    
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+    
+    @Column(nullable = true)
+    private String paymentLink;
 }

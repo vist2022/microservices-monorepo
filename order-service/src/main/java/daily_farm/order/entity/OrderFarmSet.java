@@ -14,6 +14,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -29,11 +30,14 @@ import lombok.Setter;
 @Setter
 @Entity
 @Builder
-@Table(name = "farm_set_orders")
+@Table(name = "farm_set_orders",indexes = {
+        @Index(name = "idx_order_created_status", columnList = "created_at, status"),
+        @Index(name = "idx_order_id", columnList = "id")
+    })
 public class OrderFarmSet {
 	@Id
-	@UuidGenerator
-	@GeneratedValue
+//	@UuidGenerator
+//	@GeneratedValue
 	private UUID id;
 	
 	 @Column(name = "created_at", nullable = false, updatable = false)
@@ -59,8 +63,8 @@ public class OrderFarmSet {
 	@Column(name = "farmset_id", nullable = false)
 	private UUID farmSetId;
 
-	@OneToOne(mappedBy = "orderFarmSet", cascade = CascadeType.ALL)
-	private Payment payment;
+//	@OneToOne(mappedBy = "orderFarmSet", cascade = CascadeType.ALL)
+//	private Payment payment;
 	
 	public OrderFarmSet(UUID id) {
 		this.id = id;

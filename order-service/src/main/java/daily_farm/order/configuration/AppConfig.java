@@ -8,12 +8,9 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class AppConfig {
 
-	  @Bean
-//	     RestTemplate restTemplate() {
-//	        return new RestTemplate();
-//	    }
-	public RestTemplate restTemplate() {
-	    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-	    return new RestTemplate(factory);
+	@Bean
+	RestTemplate restTemplate() {
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		return new RestTemplate(factory);
 	}
 }

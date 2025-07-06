@@ -17,6 +17,7 @@ public class FarmSetResponseForOrderDto {
 
 	private UUID farmSetId;
 	private UUID farmerId;
+	private int availibleCount;
 	private double price;
 	
 

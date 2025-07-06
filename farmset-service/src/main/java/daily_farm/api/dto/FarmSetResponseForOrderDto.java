@@ -19,6 +19,7 @@ public class FarmSetResponseForOrderDto {
 
 	private UUID farmSetId;
 	private UUID farmerId;
+	private int availibleCount;
 	private double price;
 	
 	public static FarmSetResponseForOrderDto fromFarmSet(FarmSet farmSet) {
@@ -27,6 +28,7 @@ public class FarmSetResponseForOrderDto {
 				.farmerId(farmSet.getFarmerId())
 				.farmSetId(farmSet.getId())
 				.price(farmSet.getPrice())
+				.availibleCount(farmSet.getAvailibleCount())
 				.build();
 	}
 	

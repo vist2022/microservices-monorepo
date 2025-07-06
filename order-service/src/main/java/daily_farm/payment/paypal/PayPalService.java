@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import daily_farm.order.entity.OrderFarmSet;
+import daily_farm.order.api.dto.PaymentRequestMessage;
 import daily_farm.payment.entity.Payment;
 import daily_farm.payment.repo.PaymentRepository;
 
@@ -38,7 +38,7 @@ public class PayPalService {
     @Value("${daily.farm.domain}")
     private String domain;
     
-    public String getPaypalLink(Double amount , UUID orderId) {
+    public void createPaypalLink(PaymentRequestMessage message) {
         String accessToken = authService.getAccessToken();
         log.info("PayPalService : got access token for farmer");
         HttpHeaders headers = new HttpHeaders();
@@ -59,7 +59,7 @@ public class PayPalService {
                     "cancel_url": "%s/paypal/cancel"
                   }
                 }
-                """.formatted(amount, domain, domain);
+                """.formatted(message.getAmount(), domain, domain);
 
         HttpEntity<String> request = new HttpEntity<>(orderRequestJson, headers);
         ResponseEntity<Map> response = restTemplate.exchange(apiUrl + "/v2/checkout/orders",
@@ -75,26 +75,47 @@ public class PayPalService {
             
             
             Payment payment = Payment.builder()
-            				.amount(amount)
+            				.amount(message.getAmount())
             				.createdAt(LocalDateTime.now())
-            				.orderFarmSet(new OrderFarmSet(orderId))
+            				.orderId(UUID.fromString(message.getOrderId()))
+            				.orderStatus(message.getOrderStatus())
             				.paymentProviderId(paypalOrderId)
             				.provider("PayPal")
             				.refunded(false)
             				.status("PENDING")
             				.build();
             		
-            paymentRepo.save(payment);
-            log.info("PayPalService : payment creatred and saved to database");
+           
+            
             
             List<Map<String, String>> links = (List<Map<String, String>>) responseBody.get("links");
-            return links.stream()
+            String paymentLink = links.stream()
                 .filter(link -> "approve".equals(link.get("rel")))
                 .findFirst()
                 .map(link -> link.get("href"))
                 .orElseThrow(() -> new RuntimeException("Link not found"));
-        }
-        throw new RuntimeException("Error creating payment PayPal");
+            log.info("PayPalService : payment link - {}", paymentLink);
+            
+            payment.setPaymentLink(paymentLink);
+            log.info("PayPalService : paymentLink creatred and saved to database");
+            
+            paymentRepo.save(payment);
+            log.info("PayPalService : payment creatred and saved to database");
+        } else
+        	throw new RuntimeException("Error creating payment PayPal");
+    	
+//    	Payment payment = Payment.builder()
+//				.amount(message.getAmount())
+//				.createdAt(LocalDateTime.now())
+//				.orderId(UUID.fromString(message.getOrderId()))
+//				.orderStatus(message.getOrderStatus())
+//				.paymentProviderId("paypalOrderId")
+//				.provider("PayPal")
+//				.refunded(false)
+//				.status("PENDING")
+//				.build();
+//    	 payment.setPaymentLink("paymentLink");
+//       paymentRepo.save(payment);
     }
     
     public boolean isPaid(String orderId) {
@@ -155,8 +176,6 @@ public class PayPalService {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
-         
-	
 		try {
 			JsonNode	jsonNode = objectMapper.readTree(response.getBody());
 			    String status = jsonNode.get("status").asText();

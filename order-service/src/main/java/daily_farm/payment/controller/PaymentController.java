@@ -24,5 +24,13 @@ public class PaymentController {
         	
         return ResponseEntity.ok("ok");
     }
+	
+	@GetMapping("/payment")
+	public ResponseEntity<String> getPaymentLink(@RequestParam String orderId) {
+		log.info("PaymentController: Request for payment link for order - {}", orderId);
+		String link = paymentService.getPaymentLink(orderId);
+        	
+        return link == null ? ResponseEntity.badRequest().body("Order is not exists") :  ResponseEntity.ok(link);
+    }
 
 }

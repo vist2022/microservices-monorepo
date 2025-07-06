@@ -15,9 +15,15 @@ public interface IFarmSetService {
 
 	ResponseEntity<List<FarmSetResponseDto>> getAllFarmSets();
 
-	ResponseEntity<FarmSetResponseForOrderDto> decreaseStock(FarmSetRequestForOrderDto farmSetRequestDto);
+//	ResponseEntity<FarmSetResponseForOrderDto> decreaseStock(FarmSetRequestForOrderDto farmSetRequestDto);
+	
+	ResponseEntity<FarmSetResponseForOrderDto> getFarmSet( UUID farmSetId);
 
 	ResponseEntity<Void> increaseStock(FarmSetRequestForCancelOrderDto farmSetRequestDto);
+
+	ResponseEntity<String> reserveFarmSet(FarmSetRequestForOrderDto dto, String id);
+
+	void cancelReserve(OrderFailedMessage message);
 
 
 
