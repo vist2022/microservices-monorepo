@@ -3,19 +3,14 @@ package daily_farm.order.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.UuidGenerator;
 
 import daily_farm.order.api.dto.OrderStatus;
-import daily_farm.payment.entity.Payment;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,9 +58,7 @@ public class OrderFarmSet {
 	@Column(name = "farmset_id", nullable = false)
 	private UUID farmSetId;
 
-//	@OneToOne(mappedBy = "orderFarmSet", cascade = CascadeType.ALL)
-//	private Payment payment;
-	
+
 	public OrderFarmSet(UUID id) {
 		this.id = id;
 	}

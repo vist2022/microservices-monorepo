@@ -1,4 +1,4 @@
-package daily_farm.payment.paypal;
+package daily_farm.paypal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +13,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import daily_farm.order.api.dto.PaymentRequestMessage;
-import daily_farm.payment.entity.Payment;
-import daily_farm.payment.repo.PaymentRepository;
+import daily_farm.api.dto.PaymentRequestMessage;
+import daily_farm.entity.Payment;
+import daily_farm.repo.PaymentRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

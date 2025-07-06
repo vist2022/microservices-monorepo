@@ -1,4 +1,4 @@
-package daily_farm.payment.paypal;
+package daily_farm.paypal;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
