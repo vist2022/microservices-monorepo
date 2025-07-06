@@ -1,4 +1,4 @@
-package daily_farm.payment.service;
+package daily_farm.service;
 
 import java.util.function.Consumer;
 
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import daily_farm.order.api.dto.OrderCreatedMessage;
-import daily_farm.order.api.dto.PaymentRequestMessage;
+import daily_farm.api.dto.OrderCreatedMessage;
+import daily_farm.api.dto.PaymentRequestMessage;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration

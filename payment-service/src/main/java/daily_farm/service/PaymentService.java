@@ -1,4 +1,4 @@
-package daily_farm.payment.service;
+package daily_farm.service;
 
 import java.awt.TrayIcon.MessageType;
 import java.util.Optional;
@@ -14,16 +14,15 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import daily_farm.order.entity.OrderFarmSet;
-import daily_farm.order.api.dto.OrderCancelMessage;
-import daily_farm.order.api.dto.OrderCreatedMessage;
-import daily_farm.order.api.dto.OrderRequestMessage;
-import daily_farm.order.api.dto.OrderStatus;
-import daily_farm.order.api.dto.PaymentRequestMessage;
-import daily_farm.order.api.dto.PaymentStatusMessage;
-import daily_farm.payment.entity.Payment;
-import daily_farm.payment.paypal.PayPalService;
-import daily_farm.payment.repo.PaymentRepository;
+import daily_farm.api.dto.OrderCancelMessage;
+import daily_farm.api.dto.OrderCreatedMessage;
+import daily_farm.api.dto.OrderRequestMessage;
+import daily_farm.api.dto.OrderStatus;
+import daily_farm.api.dto.PaymentRequestMessage;
+import daily_farm.api.dto.PaymentStatusMessage;
+import daily_farm.entity.Payment;
+import daily_farm.paypal.PayPalService;
+import daily_farm.repo.PaymentRepository;
 import jakarta.persistence.criteria.Order;
 import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
@@ -39,7 +38,6 @@ public class PaymentService {
 	private final PayPalService paypalService;
 	private final ObjectMapper objectMapper;
 	private final StreamBridge streamBridge;
-	private final OrderFeignClient orderFeignClient;
 
 	public void createPayment(PaymentRequestMessage message) {
 		

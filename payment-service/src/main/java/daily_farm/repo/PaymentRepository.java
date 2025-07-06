@@ -1,4 +1,4 @@
-package daily_farm.payment.repo;
+package daily_farm.repo;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import daily_farm.order.api.dto.OrderStatus;
-import daily_farm.order.entity.OrderFarmSet;
-import daily_farm.payment.entity.Payment;
+import daily_farm.api.dto.OrderStatus;
+
+import daily_farm.entity.Payment;
 
 public interface PaymentRepository extends JpaRepository<Payment, UUID>{
 
